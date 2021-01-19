@@ -57,6 +57,52 @@ class mavcon:
 		print('We are good to go!!')
 		self.setmode("OFFBOARD")
 
+	def getvelBody(self, u, v, w):
+		msg = PositionTarget()
+		msg.header.stamp = rospy.Time.now()
+		msg.coordinate_frame = 8
+		msg.type_mask = 4039
+		msg.velocity.x = u
+		msg.velocity.y = v 
+		msg.velocity.z = w 
+		r = rospy.Rate(10) # 10hz
+		while not rospy.is_shutdown():
+		   pub2.publish(msg)
+		   r.sleep()
+
+	def getvelLocal(self, u, v, w):
+		msg = PositionTarget()
+		msg.header.stamp = rospy.Time.now()
+		msg.coordinate_frame = 1
+		msg.type_mask = 4039
+		msg.velocity.x = u
+		msg.velocity.y = v 
+		msg.velocity.z = w 
+		r = rospy.Rate(10) # 10hz
+		while not rospy.is_shutdown():
+		   pub2.publish(msg)
+		   r.sleep()
+
+	def circle(self, x, y, z, r, v):
+		self.gotopose(x + 7 + 3, y, z + 5)
+		self.gotopose(x + 5, y, z)
+		
+		rate = rospy.Rate(20) # 20hz
+		while not rospy.is_shutdown():
+			msg = PositionTarget()
+			msg.header.stamp = rospy.Time.now()
+			msg.coordinate_frame = 8
+			msg.type_mask = 1543
+			msg.velocity.x = 0
+			msg.velocity.y = -1 	# Linear Velocity you want = V
+			msg.velocity.z = 0
+			msg.acceleration_or_force.x = -0.2	# V**2/R
+			msg.acceleration_or_force.y = 0
+			msg.acceleration_or_force.z = 0
+			msg.yaw_rate = -0.2			# V/R 
+		   	self.pub2.publish(msg)
+		   	rate.sleep()
+
 	def flip(self):
 		rate = rospy.Rate(20)
 		sr = AttitudeTarget()
