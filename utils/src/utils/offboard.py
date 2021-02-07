@@ -9,6 +9,108 @@ from mavros_msgs.msg import PositionTarget, GlobalPositionTarget
 from mavros_msgs.srv import SetMode, CommandBool
 from std_msgs.msg import Float32
 
+class uav:
+	def __init__(self):
+		# rospy.Subscriber('/mavros/local_position/pose', PoseStamped, self.loc_pose)
+		self.pub = rospy.Publisher('/mavros/setpoint_position/local', PoseStamped, queue_size=1)
+		self.pub2 = rospy.Publisher('/mavros/setpoint_raw/local', PositionTarget, queue_size = 10)
+		#self.pub3 = rospy.Publisher('/mavros/setpoint_raw/global', GlobalPositionTarget, queue_size = 10)
+		self.loc = Point()
+
+
+	def setmode(self,md):
+		rospy.wait_for_service('/mavros/set_mode')
+		try:
+			mode = rospy.ServiceProxy('/mavros/set_mode', SetMode)
+			response = mode(0,md)
+			response.mode_sent
+		except rospy.ServiceException, e:
+			print "Service call failed: %s"%e
+
+	def setarmc(self,av): # input: 1=arm, 0=disarm
+		rospy.wait_for_service('/mavros/cmd/arming')
+		try:
+			arming = rospy.ServiceProxy('/mavros/cmd/arming', CommandBool)
+			response = arming(av)
+			response.success
+		except rospy.ServiceException, e:
+			print "Service call failed: %s"%e
+
+	def gotopose_callback(self, x, y ,z):
+		rate = rospy.Rate(20)
+		self.sp = PoseStamped()
+		self.sp.pose.position.x = x
+		self.sp.pose.position.y = y
+		self.sp.pose.position.z = z
+		dist = np.sqrt(((self.loc.x-x)**2) + ((self.loc.y-y)**2) + ((self.loc.z-z)**2))
+		while(dist > 0.08):
+			self.pub.publish(self.sp)
+			dist = np.sqrt(((self.loc.x-x)**2) + ((self.loc.y-y)**2) + ((self.loc.z-z)**2))
+			rate.sleep()
+		#print('Reached ',x,y,z)
+
+	def gotopose(self,x,y,z):
+		self.gotopose_callback( x, y, z)
+
+	def getvelBody(self, u, v, w):
+		msg = PositionTarget()
+		msg.header.stamp = rospy.Time.now()
+		msg.coordinate_frame = 8
+		msg.type_mask = 4039
+		msg.velocity.x = u
+		msg.velocity.y = v 
+		msg.velocity.z = w 
+		r = rospy.Rate(10) # 10hz
+		while not rospy.is_shutdown():
+		   self.pub2.publish(msg)
+		   r.sleep()
+
+	def getvelLocal(self, u, v, w):
+		msg = PositionTarget()
+		msg.header.stamp = rospy.Time.now()
+		msg.coordinate_frame = 1
+		msg.type_mask = 4039
+		msg.velocity.x = u
+		msg.velocity.y = v 
+		msg.velocity.z = w 
+		r = rospy.Rate(10) # 10hz
+		while not rospy.is_shutdown():
+		   self.pub2.publish(msg)
+		   r.sleep()
+
+	def circle(self, x, y, z):
+		msg = PositionTarget()
+		msg.header.stamp = rospy.Time.now()
+		msg.coordinate_frame = 8
+		msg.type_mask = 1543
+		msg.velocity.x = 0
+		msg.velocity.y = -1 
+		msg.velocity.z = 0
+		msg.acceleration_or_force.x = -0.2
+		msg.acceleration_or_force.y = 0
+		msg.acceleration_or_force.z = 0
+		msg.yaw_rate = -0.2
+	   	self.pub2.publish(msg)
+	   	
+	   	
+	def offboard(self, arg):
+		rate = rospy.Rate(10)
+		sp = PoseStamped()
+		sp.pose.position.x = 0.0
+		sp.pose.position.y = 0.0
+		sp.pose.position.z = 0.0
+		for i in range(10):
+			self.pub.publish(sp)
+			rate.sleep()
+		print('We are good to go!!')
+		self.setmode("OFFBOARD")
+
+	def loc_pose(self, data):
+		self.loc.x = data.pose.position.x
+		self.loc.y = data.pose.position.y
+		self.loc.z = data.pose.position.z
+
+
 
 class child:
 	def __init__(self):
@@ -223,6 +325,24 @@ class parent:
 		print('We are good to go!!')
 
 		self.setmode("OFFBOARD")
+
+	def og_gotopose(self,x,y,z,v):
+		#rate=rospy.Rate(50)
+		og=PositionTarget()
+		og.coordinate_frame=1
+		og.type_mask=64+128+256+512+1024+2048
+		og.position.x=x
+		og.position.y=y
+		og.position.z=z
+
+		v_vector=np.array([x-self.pt.x,y-self.pt.y,z-self.pt.z])
+		unit_vector=v_vector/np.linalg.norm(v_vector)
+		velo=unit_vector*v
+		og.velocity.x=velo[0]
+		og.velocity.y=velo[1]
+		og.velocity.z=velo[2]
+
+		self.parentpub2.publish(og)
 
 	def loc_pose(self,data):
 		self.parent_loc.x = data.pose.position.x
