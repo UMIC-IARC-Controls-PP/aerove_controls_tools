@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.5.1-0-g916b5db  Build Version: 1.5.7152.31018
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="pata_nhi">
+  <link
+    name="daughter_drone">
+    <inertial>
+      <origin
+        xyz="0.322273331716569 -1.06306429853643 0.703610457423331"
+        rpy="0 0 0" />
+      <mass
+        value="9.17274716357279" />
+      <inertia
+        ixx="0.113168183907872"
+        ixy="2.879340902747E-05"
+        ixz="3.55812202013983E-07"
+        iyy="0.106632530815954"
+        iyz="3.55959495991135E-07"
+        izz="0.216588374946071" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://pata_nhi/meshes/daughter_drone.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://pata_nhi/meshes/daughter_drone.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="x_mechanism">
+    <inertial>
+      <origin
+        xyz="0 -1.11022302462516E-16 0.0299999999999999"
+        rpy="0 0 0" />
+      <mass
+        value="0.361821889354435" />
+      <inertia
+        ixx="0.000181977592876624"
+        ixy="-1.59184665590959E-20"
+        ixz="2.25909373767043E-21"
+        iyy="0.00114039214204202"
+        iyz="-7.40988393934503E-20"
+        izz="0.00105499825884494" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://pata_nhi/meshes/x_mechanism.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://pata_nhi/meshes/x_mechanism.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="x_mechanism_joint"
+    type="prismatic">
+    <origin
+      xyz="0.28849 -1.0645 0.77331"
+      rpy="-1.5708 0 -1.5708" />
+    <parent
+      link="daughter_drone" />
+    <child
+      link="x_mechanism" />
+    <axis
+      xyz="0 0 0" />
+    <limit
+      lower="-0.05"
+      upper="0.05"
+      effort="2"
+      velocity="0.01" />
+  </joint>
+  <link
+    name="y_mechanism">
+    <inertial>
+      <origin
+        xyz="1.11022302462516E-16 0 -0.03"
+        rpy="0 0 0" />
+      <mass
+        value="0.361821889354436" />
+      <inertia
+        ixx="0.000181977592876624"
+        ixy="1.53500808184568E-19"
+        ixz="-6.20408485609846E-21"
+        iyy="0.00114039214204202"
+        iyz="7.13462850366187E-22"
+        izz="0.00105499825884495" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://pata_nhi/meshes/y_mechanism.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://pata_nhi/meshes/y_mechanism.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="y_mechanism_joint"
+    type="prismatic">
+    <origin
+      xyz="0.026068 0.03 0.034829"
+      rpy="0 -1.5708 0" />
+    <parent
+      link="x_mechanism" />
+    <child
+      link="y_mechanism" />
+    <axis
+      xyz="0 0 0" />
+    <limit
+      lower="-0.05"
+      upper="0.05"
+      effort="2"
+      velocity="0.01" />
+  </joint>
+  <link
+    name="z_mechanism">
+    <inertial>
+      <origin
+        xyz="0.00771870263319374 0.17431108570966 -0.00144914915511857"
+        rpy="0 0 0" />
+      <mass
+        value="1.92381564495859" />
+      <inertia
+        ixx="0.00282122758517376"
+        ixy="3.50848036648591E-09"
+        ixz="-5.88725255393279E-09"
+        iyy="0.00469695924074433"
+        iyz="4.33546996231085E-06"
+        izz="0.00281090252061711" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://pata_nhi/meshes/z_mechanism.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.501960784313725 0.501960784313725 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://pata_nhi/meshes/z_mechanism.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="z_mechanism_joint"
+    type="prismatic">
+    <origin
+      xyz="-0.0048285 -0.0075 -0.03"
+      rpy="0 -1.5708 0" />
+    <parent
+      link="y_mechanism" />
+    <child
+      link="z_mechanism" />
+    <axis
+      xyz="0 0 0" />
+    <limit
+      lower="-0.05"
+      upper="0.05"
+      effort="2"
+      velocity="0.01" />
+  </joint>
+  <link
+    name="end_effector">
+    <inertial>
+      <origin
+        xyz="0.178615161378153 -0.165941174454432 -0.0105075998025083"
+        rpy="0 0 0" />
+      <mass
+        value="6.13770916735216" />
+      <inertia
+        ixx="0.0986670696410841"
+        ixy="0.000741161589832155"
+        ixz="4.68928223656675E-07"
+        iyy="0.10164316316901"
+        iyz="2.25010794882705E-06"
+        izz="0.00971217362210569" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://pata_nhi/meshes/end_effector.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.776470588235294 0.756862745098039 0.737254901960784 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://pata_nhi/meshes/end_effector.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="end_effector_joint"
+    type="fixed">
+    <origin
+      xyz="0.32347 0.23575 0.0099627"
+      rpy="0 0 3.1416" />
+    <parent
+      link="z_mechanism" />
+    <child
+      link="end_effector" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+
+  <gazebo reference="x_mechanism">
+    <material>Gazebo/Green</material>
+  </gazebo>
+
+  <gazebo reference="y_mechanism">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+
+  <gazebo reference="z_mechanism">
+    <material>Gazebo/Red</material>
+  </gazebo>
+</robot>

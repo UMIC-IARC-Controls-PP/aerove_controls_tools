@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.5.1-0-g916b5db  Build Version: 1.5.7152.31018
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="daughter5">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="0.323192234395567 -0.968814529928352 0.691527625574462"
+        rpy="0 0 0" />
+      <mass
+        value="18.1343929242508" />
+      <inertia
+        ixx="0.122775288901464"
+        ixy="2.82019801601975E-05"
+        ixz="-2.89671162372037E-07"
+        iyy="0.138828303061342"
+        iyz="8.06294042676756E-07"
+        izz="0.252112439988922" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://daughter5/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.776470588235294 0.756862745098039 0.737254901960784 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://daughter5/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="daughter_mounts">
+    <inertial>
+      <origin
+        xyz="-0.28482 0.047234 0.18037"
+        rpy="0 0 0" />
+      <mass
+        value="0.39734" />
+      <inertia
+        ixx="0.00019431"
+        ixy="-1.4903E-22"
+        ixz="1.3553E-20"
+        iyy="0.00016614"
+        iyz="-3.425E-22"
+        izz="0.00019431" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://daughter5/meshes/daughter_mounts.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89804 0.91765 0.92941 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://daughter5/meshes/daughter_mounts.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="daughter_mounts_joint"
+    type="fixed">
+    <origin
+      xyz="0.561702686926769 -0.826106221612544 0.520809064190048"
+      rpy="1.5707963267949 0 0.220867960858711" />
+    <parent
+      link="base_link" />
+    <child
+      link="daughter_mounts" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="x_mechanism">
+    <inertial>
+      <origin
+        xyz="0.0500000000000002 -1.55431223447522E-15 -0.1"
+        rpy="0 0 0" />
+      <mass
+        value="0.361596313280266" />
+      <inertia
+        ixx="0.00105255016394987"
+        ixy="6.12098920903487E-20"
+        ixz="-1.49966403210821E-19"
+        iyy="0.001138204739837"
+        iyz="-7.3899021328892E-19"
+        izz="0.000181799273034598" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://daughter5/meshes/x_mechanism.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://daughter5/meshes/x_mechanism.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="x_mechanism_joint"
+    type="fixed">
+    <origin
+      xyz="0.281880541859617 -1.16449456926086 0.773309064190052"
+      rpy="1.5707963267949 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="x_mechanism" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="y_mechanism">
+    <inertial>
+      <origin
+        xyz="4.44089209850063E-16 1.4432899320127E-15 -0.0300000000000001"
+        rpy="0 0 0" />
+      <mass
+        value="0.361596313280266" />
+      <inertia
+        ixx="0.000181799273034598"
+        ixy="7.3263292503533E-19"
+        ixz="1.51069672341954E-19"
+        iyy="0.001138204739837"
+        iyz="6.09010933850894E-20"
+        izz="0.00105255016394987" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://daughter5/meshes/y_mechanism.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://daughter5/meshes/y_mechanism.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="y_mechanism_joint"
+    type="fixed">
+    <origin
+      xyz="0.0800000000000001 0 -0.1"
+      rpy="0 1.5707963267949 0" />
+    <parent
+      link="x_mechanism" />
+    <child
+      link="y_mechanism" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="z_mechanism">
+    <inertial>
+      <origin
+        xyz="-0.000889210725263156 0.304486025518739 8.83599374112976E-07"
+        rpy="0 0 0" />
+      <mass
+        value="2.02114034695291" />
+      <inertia
+        ixx="0.00286486578798849"
+        ixy="-3.50848036741384E-09"
+        ixz="-5.88725255370192E-09"
+        iyy="0.0047111286894569"
+        iyz="2.6746451858684E-09"
+        izz="0.00286442096739907" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://daughter5/meshes/z_mechanism.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.250980392156863 0.250980392156863 0.250980392156863 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://daughter5/meshes/z_mechanism.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="z_mechanism_joint"
+    type="fixed">
+    <origin
+      xyz="-0.0115122360355437 0.0274999999999997 -0.03"
+      rpy="3.14159265358979 0 0" />
+    <parent
+      link="y_mechanism" />
+    <child
+      link="z_mechanism" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="end_effector">
+    <inertial>
+      <origin
+        xyz="0.0842524173709407 0.108521400416605 0.168960831222487"
+        rpy="0 0 0" />
+      <mass
+        value="6.13346764843363" />
+      <inertia
+        ixx="0.00969440905669386"
+        ixy="3.31495046609323E-06"
+        ixz="-5.29990975031473E-07"
+        iyy="0.101623549882704"
+        iyz="-0.000739163904931415"
+        izz="0.0986462091189388" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://daughter5/meshes/end_effector.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://daughter5/meshes/end_effector.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="end_effector_joint"
+    type="fixed">
+    <origin
+      xyz="-0.000168657552571005 0.57236728950559 0.0847280666359679"
+      rpy="3.14159265358979 1.5707963267949 0" />
+    <parent
+      link="z_mechanism" />
+    <child
+      link="end_effector" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+</robot>
