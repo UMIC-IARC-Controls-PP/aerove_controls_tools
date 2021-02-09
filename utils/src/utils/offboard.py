@@ -7,11 +7,11 @@ from geometry_msgs.msg import Point, PoseStamped
 # import all mavros messages and services
 from mavros_msgs.msg import PositionTarget, GlobalPositionTarget
 from mavros_msgs.srv import SetMode, CommandBool
-from std_msgs.msg import Float32
+from std_msgs.msg import Int32
 
 class uav:
 	def __init__(self):
-		# rospy.Subscriber('/mavros/local_position/pose', PoseStamped, self.loc_pose)
+		rospy.Subscriber('/mavros/local_position/pose', PoseStamped, self.loc_pose)
 		self.pub = rospy.Publisher('/mavros/setpoint_position/local', PoseStamped, queue_size=1)
 		self.pub2 = rospy.Publisher('/mavros/setpoint_raw/local', PositionTarget, queue_size = 10)
 		#self.pub3 = rospy.Publisher('/mavros/setpoint_raw/global', GlobalPositionTarget, queue_size = 10)
@@ -36,21 +36,18 @@ class uav:
 		except rospy.ServiceException, e:
 			print "Service call failed: %s"%e
 
-	def gotopose_callback(self, x, y ,z):
+	def gotopose(self, x, y ,z):
 		rate = rospy.Rate(20)
 		self.sp = PoseStamped()
 		self.sp.pose.position.x = x
 		self.sp.pose.position.y = y
 		self.sp.pose.position.z = z
 		dist = np.sqrt(((self.loc.x-x)**2) + ((self.loc.y-y)**2) + ((self.loc.z-z)**2))
-		while(dist > 0.08):
+		while(dist > 0.18):
 			self.pub.publish(self.sp)
 			dist = np.sqrt(((self.loc.x-x)**2) + ((self.loc.y-y)**2) + ((self.loc.z-z)**2))
 			rate.sleep()
 		#print('Reached ',x,y,z)
-
-	def gotopose(self,x,y,z):
-		self.gotopose_callback( x, y, z)
 
 	def getvelBody(self, u, v, w):
 		msg = PositionTarget()
@@ -114,7 +111,7 @@ class uav:
 
 class child:
 	def __init__(self):
-		# rospy.Subscriber('/uav0/mavros/local_position/pose', PoseStamped, self.loc_pose)
+		rospy.Subscriber('/uav0/mavros/local_position/pose', PoseStamped, self.loc_pose)
 		self.childpub = rospy.Publisher('/uav0/mavros/setpoint_position/local', PoseStamped, queue_size=1)
 		self.childpub2 = rospy.Publisher('/uav0/mavros/setpoint_raw/local', PositionTarget, queue_size = 10)
 		#self.pub3 = rospy.Publisher('/uav0/mavros/setpoint_raw/global', GlobalPositionTarget, queue_size = 10)
@@ -140,21 +137,19 @@ class child:
 		except rospy.ServiceException, e:
 			print "Service call failed: %s"%e
 
-	def gotopose_callback(self, x, y ,z):
+	def gotopose(self, x, y ,z):
 		rate = rospy.Rate(20)
 		self.sp = PoseStamped()
 		self.sp.pose.position.x = x
 		self.sp.pose.position.y = y
 		self.sp.pose.position.z = z
 		dist = np.sqrt(((self.child_loc.x-x)**2) + ((self.child_loc.y-y)**2) + ((self.child_loc.z-z)**2))
-		while(dist > 0.08):
+		while(dist > 1):
 			self.childpub.publish(self.sp)
 			dist = np.sqrt(((self.child_loc.x-x)**2) + ((self.child_loc.y-y)**2) + ((self.child_loc.z-z)**2))
+			print(dist)
 			rate.sleep()
 		#print('Reached ',x,y,z)
-
-	def gotopose(self,x,y,z):
-		self.gotopose_callback( x, y, z)
 
 	def getvelBody(self, u, v, w):
 		msg = PositionTarget()
@@ -213,6 +208,7 @@ class child:
 		self.child_loc.x = data.pose.position.x
 		self.child_loc.y = data.pose.position.y
 		self.child_loc.z = data.pose.position.z
+		#print("ho gaya")
 
 	
 
@@ -222,9 +218,10 @@ class parent:
 		self.parentpub2 = rospy.Publisher('/uav1/mavros/setpoint_raw/local', PositionTarget, queue_size = 10)
 		#self.pub3 = rospy.Publisher('/uav1/setpoint_raw/global', GlobalPositionTarget, queue_size = 10)
 		self.parent_loc = Point()
-		self.checkpub = rospy.Publisher('/check_topic', Float32, queue_size=1)
-		self.check = Float32()
+		self.checkpub = rospy.Publisher('/check_topic', Int32, queue_size=10)
+		self.check = Int32()
 		self.check = 0
+		#self.check = 0
 		#self.checkpub.publish(self.check)
 		rospy.Subscriber('/uav1/mavros/local_position/pose', PoseStamped, self.loc_pose)
 
@@ -248,7 +245,7 @@ class parent:
 		except rospy.ServiceException, e:
 			print "Service call failed: %s"%e
 
-	def gotopose_callback(self, x, y, z):
+	def gotopose(self, x, y, z):
 		rate = rospy.Rate(20)
 		self.sp = PoseStamped()
 		self.sp.pose.position.x = x
@@ -263,9 +260,6 @@ class parent:
 			rate.sleep()
 		
 		#print('Reached ',x,y,z)
-
-	def gotopose(self,x,y,z):
-		self.gotopose_callback(x ,y ,z)
 
 	def getvelBody(self, u, v, w):
 		msg = PositionTarget()
@@ -335,7 +329,7 @@ class parent:
 		og.position.y=y
 		og.position.z=z
 
-		v_vector=np.array([x-self.pt.x,y-self.pt.y,z-self.pt.z])
+		v_vector=np.array([x-self.parent_loc.x,y-self.parent_loc.y,z-self.parent_loc.z])
 		unit_vector=v_vector/np.linalg.norm(v_vector)
 		velo=unit_vector*v
 		og.velocity.x=velo[0]
@@ -350,6 +344,7 @@ class parent:
 		self.parent_loc.z = data.pose.position.z
 		#print('publish hori values')
 		flag = self.check 
+		#print(flag)
 		self.checkpub.publish(flag)
 
 # if __name__ == '__main__':

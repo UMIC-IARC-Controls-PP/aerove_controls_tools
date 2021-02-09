@@ -11,7 +11,8 @@ import multiprocessing
 from threading import Thread
 import thread
 from utils.offboard import child, parent
-from std_msgs.msg import Bool
+from std_msgs.msg import Int32
+import pymap3d as pm
 
 
 
@@ -33,16 +34,24 @@ class autopilot:
 		self.parent.setarmp(1)
 		self.parent.offboard(1)
 		self.parent.gotopose(0, 0, z)
+		self.LAP()
 
 	def LAP(self):
-		wplist = []*8
+		lat0 = 47.3977418
+		lon0 = 8.5455940
+		h0 = 0
+		wplist = [[47.39765761,8.54567804,10],[47.39765051,8.5457109,10],[47.3976517,8.5490403,10],[47.397658728185355,8.549073930306008,10],[47.39767601073463,8.549099230295639,10],[47.39769957818326,8.54910992151855,10],[47.39771976,8.5490977,10],[47.39773617,8.54907284,10],[47.39774184,8.54903777,10],[47.39774191,8.54570904,10],[47.39773547,8.54567526,10],[47.39771924,8.54565179,10],[47.39769602,8.54564273,10],[47.39767368766275,8.545654009347942,10]]#*8
 		for wp in wplist:
-			dist= np.sqrt(((self.parent.parent_loc.x-wp[0])**2) + ((self.parent.parent_loc.y-wp[1])**2) + ((self.parent.parent_loc.z-wp[2])**2))
-   			rate = rospy.Rate(20)
-	    	while(dist>0.5):
-		        self.parent.og_gotopose(wp[0],wp[1],wp[2],self.var)
-		        dist= np.sqrt(((mvc.pt.x-point[0])**2) + ((mvc.pt.y-point[1])**2) + ((mvc.pt.z-point[2])**2))
-		        rate.sleep()
+			x, y, z = pm.geodetic2enu(wp[0],wp[1],wp[2], lat0, lon0, h0)
+			print(x, y, z)
+			dist= np.sqrt(((self.parent.parent_loc.x-x)**2) + ((self.parent.parent_loc.y-y)**2) + ((self.parent.parent_loc.z-z)**2))
+			rate = rospy.Rate(20)
+			while(dist>0.5):
+				print(dist)
+				self.parent.og_gotopose(x,y,z,5)
+				dist= np.sqrt(((self.parent.parent_loc.x-x)**2) + ((self.parent.parent_loc.y-y)**2) + ((self.parent.parent_loc.z-z)**2))
+				rate.sleep()
+		self.parent.check = 1
 
 	def DETACH(self):
 		#Mother and Daughter combined should stop. and Daughter should Takeoff. 
@@ -95,12 +104,10 @@ class autopilot:
 if __name__ == '__main__':
   rospy.init_node('autopilot_node', anonymous=True)
   autopilot = autopilot()
-  #child = child()
+  child = child()
   parent = parent()
-  rospy.sleep(10)
-  parent.setarmp(1)
-  parent.offboard(0)
-  parent.gotopose(0, 0, 5)
+  rospy.sleep(5)
+  autopilot.TAKEOFF(10)
 
   # thread.start_new_thread( child.setarmc(1), 1 )
   # thread.start_new_thread( parent.setarmp(1), 1 )
