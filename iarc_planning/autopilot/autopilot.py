@@ -55,7 +55,8 @@ class autopilot:
 
 	def DETACH(self):
 		#Mother and Daughter combined should stop. and Daughter should Takeoff. 
-		pass 
+		self.parent.gotopose(-6, 0, 100)
+		self.parent.setmode('POSCTL')
 
 	def REVERSELAP(self):
 		#A copy of lap but with the setpoints list reversed.

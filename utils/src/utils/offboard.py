@@ -27,7 +27,7 @@ class uav:
 		except rospy.ServiceException, e:
 			print "Service call failed: %s"%e
 
-	def setarmc(self,av): # input: 1=arm, 0=disarm
+	def setarm(self,av): # input: 1=arm, 0=disarm
 		rospy.wait_for_service('/mavros/cmd/arming')
 		try:
 			arming = rospy.ServiceProxy('/mavros/cmd/arming', CommandBool)
@@ -65,12 +65,12 @@ class uav:
 	def getvelLocal(self, u, v, w):
 		msg = PositionTarget()
 		msg.header.stamp = rospy.Time.now()
-		msg.coordinate_frame = 1
+		msg.coordinate_frame = 8
 		msg.type_mask = 4039
 		msg.velocity.x = u
 		msg.velocity.y = v 
 		msg.velocity.z = w 
-		r = rospy.Rate(10) # 10hz
+		r = rospy.Rate(20) # 10hz
 		while not rospy.is_shutdown():
 		   self.pub2.publish(msg)
 		   r.sleep()
