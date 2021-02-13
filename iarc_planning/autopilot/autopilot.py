@@ -40,7 +40,8 @@ class autopilot:
 		lat0 = 47.3977418
 		lon0 = 8.5455940
 		h0 = 0
-		wplist = [[47.39765761,8.54567804,10],[47.39765051,8.5457109,10],[47.3976517,8.5490403,10],[47.397658728185355,8.549073930306008,10],[47.39767601073463,8.549099230295639,10],[47.39769957818326,8.54910992151855,10],[47.39771976,8.5490977,10],[47.39773617,8.54907284,10],[47.39774184,8.54903777,10],[47.39774191,8.54570904,10],[47.39773547,8.54567526,10],[47.39771924,8.54565179,10],[47.39769602,8.54564273,10],[47.39767368766275,8.545654009347942,10]]#*8
+		# wplist = [[47.39765761,8.54567804,10],[47.39765051,8.5457109,10],[47.3976517,8.5490403,10],[47.397658728185355,8.549073930306008,10],[47.39767601073463,8.549099230295639,10],[47.39769957818326,8.54910992151855,10],[47.39771976,8.5490977,10],[47.39773617,8.54907284,10],[47.39774184,8.54903777,10],[47.39774191,8.54570904,10],[47.39773547,8.54567526,10],[47.39771924,8.54565179,10],[47.39769602,8.54564273,10],[47.39767368766275,8.545654009347942,10]]#*8
+		wplist = [[47.397660849276726, 8.545655730049234, 10.0],[47.397660796492254, 8.549073402298644, 10.0],[47.39773275267587, 8.549073407035635, 10.0],[47.39773280546047, 8.545655730133277, 10.0]]
 		for wp in wplist:
 			x, y, z = pm.geodetic2enu(wp[0],wp[1],wp[2], lat0, lon0, h0)
 			print(x, y, z)
@@ -48,22 +49,41 @@ class autopilot:
 			rate = rospy.Rate(20)
 			while(dist>0.5):
 				print(dist)
-				self.parent.og_gotopose(x,y,z,5)
+				self.parent.og_gotopose(x,y,z,10)
 				dist= np.sqrt(((self.parent.parent_loc.x-x)**2) + ((self.parent.parent_loc.y-y)**2) + ((self.parent.parent_loc.z-z)**2))
 				rate.sleep()
 		self.parent.check = 1
+		self.DETACH()
 
 	def DETACH(self):
 		#Mother and Daughter combined should stop. and Daughter should Takeoff. 
-		self.parent.gotopose(-6, 0, 100)
-		self.parent.setmode('POSCTL')
+		self.parent.gotopose(-6, 0, 10)
+		time.sleep(20)
+		self.REVERSELAP()
+		# self.parent.setmode('POSCTL')
 
 	def REVERSELAP(self):
-		#A copy of lap but with the setpoints list reversed.
-		pass
+		lat0 = 47.3977418
+		lon0 = 8.5455940
+		h0 = 0
+		# wplist = [[47.39765761,8.54567804,10],[47.39765051,8.5457109,10],[47.3976517,8.5490403,10],[47.397658728185355,8.549073930306008,10],[47.39767601073463,8.549099230295639,10],[47.39769957818326,8.54910992151855,10],[47.39771976,8.5490977,10],[47.39773617,8.54907284,10],[47.39774184,8.54903777,10],[47.39774191,8.54570904,10],[47.39773547,8.54567526,10],[47.39771924,8.54565179,10],[47.39769602,8.54564273,10],[47.39767368766275,8.545654009347942,10]]#*8
+		wplist = [[47.397660849276726, 8.545655730049234, 10.000008056735064],[47.397660796492254, 8.549073402298644, 10.005404873060154],[47.39773275267587, 8.549073407035635, 10.005398593771647],[47.39773280546047, 8.545655730133277, 10.00000177785658]]
+		for wp in reversed(wplist):
+			x, y, z = pm.geodetic2enu(wp[0],wp[1],wp[2], lat0, lon0, h0)
+			print(x, y, z)
+			dist= np.sqrt(((self.parent.parent_loc.x-x)**2) + ((self.parent.parent_loc.y-y)**2) + ((self.parent.parent_loc.z-z)**2))
+			rate = rospy.Rate(20)
+			while(dist>0.5):
+				print(dist)
+				self.parent.og_gotopose(x,y,z,10)
+				dist= np.sqrt(((self.parent.parent_loc.x-x)**2) + ((self.parent.parent_loc.y-y)**2) + ((self.parent.parent_loc.z-z)**2))
+				rate.sleep()
+		self.parent.check = 1
+		self.PARENTLAND()
 
 	def PARENTLAND(self):	# Lands at current position.
-		self.parent.gotopose(self.curr_x, self.curr_y, 0.1)
+		self.parent.gotopose(0, 0, 0.8)
+		self.parent.setmode('AUTO.LAND')
 		print('MOTHERSHIP LANDED')
 
 	def CHILDLAND(self):		#TODO : Change the Publisher
@@ -73,8 +93,8 @@ class autopilot:
 	def FINDER(self, x, y, z):
 		# This State is when the daughter ship looks for the mast
 		# TODO : Fix the Publisher
-		self.child.gotopose(x + 10 + 5, y, z + 5)
-		self.child.gotopose(x + 10, y, z)
+		self.child.gotopose( -10, -8, 15)
+		self.child.gotopose( -10, -3, 5)
 		rate = rospy.Rate(20)
 		while (self.isModuleDetected != True):
 			self.child.circle(x, y, z)

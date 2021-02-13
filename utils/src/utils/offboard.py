@@ -5,7 +5,7 @@ import numpy as np
 # 3D point & Stamped Pose msgs
 from geometry_msgs.msg import Point, PoseStamped
 # import all mavros messages and services
-from mavros_msgs.msg import PositionTarget, GlobalPositionTarget
+from mavros_msgs.msg import PositionTarget, GlobalPositionTarget, AttitudeTarget
 from mavros_msgs.srv import SetMode, CommandBool
 from std_msgs.msg import Int32
 
@@ -114,6 +114,7 @@ class child:
 		rospy.Subscriber('/uav0/mavros/local_position/pose', PoseStamped, self.loc_pose)
 		self.childpub = rospy.Publisher('/uav0/mavros/setpoint_position/local', PoseStamped, queue_size=1)
 		self.childpub2 = rospy.Publisher('/uav0/mavros/setpoint_raw/local', PositionTarget, queue_size = 10)
+		self.childpub3 = rospy.Publisher('/uav0/mavros/setpoint_raw/attitude', AttitudeTarget, queue_size = 10)
 		#self.pub3 = rospy.Publisher('/uav0/mavros/setpoint_raw/global', GlobalPositionTarget, queue_size = 10)
 		self.child_loc = Point()
 
@@ -137,31 +138,32 @@ class child:
 		except rospy.ServiceException, e:
 			print "Service call failed: %s"%e
 
-	def gotopose(self, x, y ,z):
+	def gotopose(self, x, y, z):
 		rate = rospy.Rate(20)
 		self.sp = PoseStamped()
 		self.sp.pose.position.x = x
 		self.sp.pose.position.y = y
 		self.sp.pose.position.z = z
 		dist = np.sqrt(((self.child_loc.x-x)**2) + ((self.child_loc.y-y)**2) + ((self.child_loc.z-z)**2))
-		while(dist > 1):
+		while(dist > 0.4):
 			self.childpub.publish(self.sp)
 			dist = np.sqrt(((self.child_loc.x-x)**2) + ((self.child_loc.y-y)**2) + ((self.child_loc.z-z)**2))
-			print(dist)
 			rate.sleep()
 		#print('Reached ',x,y,z)
 
-	def getvelBody(self, u, v, w):
-		msg = PositionTarget()
+	def setoreo(self, x,y,z,w):
+		msg = AttitudeTarget()
 		msg.header.stamp = rospy.Time.now()
-		msg.coordinate_frame = 8
-		msg.type_mask = 4039
-		msg.velocity.x = u
-		msg.velocity.y = v 
-		msg.velocity.z = w 
+		# msg.coordinate_frame = 1
+		msg.type_mask = 7
+		msg.orientation.x = x
+		msg.orientation.y = y
+		msg.orientation.z = z
+		msg.orientation.w = w
+		msg.thrust = 0.7
 		r = rospy.Rate(10) # 10hz
-		while not rospy.is_shutdown():
-		   self.childpub2.publish(msg)
+		for k in range(10):
+		   self.childpub3.publish(msg)
 		   r.sleep()
 
 	def getvelLocal(self, u, v, w):
@@ -185,10 +187,10 @@ class child:
 		msg.velocity.x = 0
 		msg.velocity.y = -1 
 		msg.velocity.z = 0
-		msg.acceleration_or_force.x = -0.2
+		msg.acceleration_or_force.x = 0.3
 		msg.acceleration_or_force.y = 0
 		msg.acceleration_or_force.z = 0
-		msg.yaw_rate = -0.2
+		msg.yaw_rate = 0.3
 	   	self.childpub2.publish(msg)
 	   	
 	   	
@@ -324,10 +326,10 @@ class parent:
 		#rate=rospy.Rate(50)
 		og=PositionTarget()
 		og.coordinate_frame=1
-		og.type_mask=64+128+256+512+1024+2048
-		og.position.x=x
-		og.position.y=y
-		og.position.z=z
+		og.type_mask=1+2+4+64+128+256+512+1024+2048
+		# og.position.x=x
+		# og.position.y=y
+		# og.position.z=z
 
 		v_vector=np.array([x-self.parent_loc.x,y-self.parent_loc.y,z-self.parent_loc.z])
 		unit_vector=v_vector/np.linalg.norm(v_vector)
